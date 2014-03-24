@@ -2,15 +2,11 @@
 // title = Encodable.java
 // by = Brian Kim
 // description = an interface that declares functions for
-//  encoding and decoding bits
+//  encoding some sort of data into a sequence of bits
 //===========================================================
 
 package geneticalgorithm;
 
-/**
- *
- * @author bkim11
- */
 public interface Encodable 
 {
     public BitString encode();

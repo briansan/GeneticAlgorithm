@@ -21,15 +21,15 @@ public class SpiderBotFitnessFunction implements FitnessFunction
         //
         // variable declarations
         //
-        // input variable x_motordata;
        
-        MotorData[] motors;
+        MotorData[] motors;   // an array of motors decoded from the chromosome
         MotorData m1, m2, m3; // dummy variables...m1 = left, m2 = back, m3 = right
-        double y; // return value
-        double err; // total error
-        double dir_err, dir_err_lr, dir_err_back; // directional error (0.5)
-        double spd_err, spd_err_lr, spd_err_lb, spd_err_rb; // magnitudal error (0.5)
-        boolean back_overflow; // check to see if back motor is too fast
+        double y;             // return value
+        double err;           // total error
+        double dir_err, dir_err_lr, dir_err_back;           // directional error (0.5)
+        double spd_err, spd_err_lr, spd_err_lb, spd_err_rb; // speed error (0.5)
+        boolean back_overflow; 
+        // the speed of the back motor accounts for 50% of the speed error (0.25)
         
         // 
         // variable assignments
@@ -53,11 +53,12 @@ public class SpiderBotFitnessFunction implements FitnessFunction
         spd_err_lb = (back_overflow ? 1.0 : (double)Math.abs(m1.motorSpeed - m2.motorSpeed/2)/128) * 0.125;
         spd_err_rb = (back_overflow ? 1.0 : (double)Math.abs(m3.motorSpeed - m2.motorSpeed/2)/128) * 0.125;
         
+        // compute the errors
         dir_err = dir_err_lr + dir_err_back;
         spd_err = spd_err_lr + spd_err_lb + spd_err_rb;
-        
         err = dir_err + spd_err;
         
+        // fitness = 1 - error
         y = 1 - err;
         
         /* debugging

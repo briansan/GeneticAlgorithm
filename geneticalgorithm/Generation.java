@@ -1,28 +1,26 @@
 //
 // title = Generation.java
 // by = Brian Kim
-// description = a class that decribes a generation
+// description = this class defines the behavior 
+//  of a population of chromosomes to evolve through 
+//  crossovers and mutation
 //
 
 package geneticalgorithm;
 
-/**
- *
- * @author bkim11
- */
-public abstract class Generation // abbreviated to: gen, plural: gens
+public abstract class Generation // abbreviation: gen, plural: gens
 {
     // 
-    // properties
+    // properties (instance variables)
     //
+
+    // a unique name for the generation (optional)
     public String name;
     
-    //
-    // instance variables
-    //
-    
+    // a counter for each evolution
     protected int count = 0;
     
+    // ZZ: state machine?
     /* States
     private int state = 0;
     private final int GenerationStateInit = 0;
@@ -30,27 +28,27 @@ public abstract class Generation // abbreviated to: gen, plural: gens
     private final int GenerationStateBestChromosomeFound = 2;
     */
     
-    // an array that holds fitness values for the gen
+    // fitness value array for the gen
     protected double[] fitness; // of the current gen
-    protected double[][] fitnessHistory; 
+    protected double[][] fitnessHistory; // ZZ: remember previous fitnesses
     
-    // an array that holds population values for the gen
+    // chromosome array represents the population
     protected Chromosome[] population; // of the current gen
-    protected Chromosome[][] populationHistory; // from all previous gens
+    protected Chromosome[][] populationHistory; // ZZ: recall previous gens
     
     // the fitness fn that will rate the chromosomes to evaluate their fitnesses
+    // must be set in a subclass constructor
     protected FitnessFunction ff;
     
-    // the size of the population is a good thing to always know
     protected int population_size;
     
-    // probability that a chromosome will mutate
+    // probability that a chromosome will mutate: [0, 1]
     protected double mutation_rate; 
     
     // number of bits that will mutate
     protected int mutation_volume;
     
-    // holds the value of the most fit chromosome
+    // reference to the most fit chromosome
     protected Chromosome most_fit;
     
     //
@@ -63,7 +61,7 @@ public abstract class Generation // abbreviated to: gen, plural: gens
     public Chromosome[] getPopulation() {return this.population;}
     public int getPopulationSize() {return this.population_size;}
     
-    // method to get an array of decodad components of the population
+    // method to get an array of decoded components of the population
     public Object[] getData()
     {
         // var decls: i for indexing, n for pop size, y is the output array
@@ -80,18 +78,27 @@ public abstract class Generation // abbreviated to: gen, plural: gens
       return y;
     }
     
-    
+    /*
+     fitness function values */
     public double[] getFitness() {return this.fitness;}
     
+    /*
+     mutation probability */
     public double getMutationRate() {return mutation_rate;}
     public void setMutationRate( double rate ) { mutation_rate = cleanMutationRate(rate); }
     
+    /*
+     number of bit to mutate */
     public int getMutationVolume() {return mutation_volume;}
     public void setMutationVolume( int n ) { mutation_volume = n; }
     
+    /* 
+     get most fit chromosome */
     public Chromosome getMostFit() {return most_fit;}
     public double rateMostFit() {return ff.rate(most_fit);}
     
+    /*
+     get any chromosome */
     public Chromosome getChromosomeAtIndex(int i) {return this.population[i];}
     
     //
@@ -122,15 +129,18 @@ public abstract class Generation // abbreviated to: gen, plural: gens
         this.mutation_rate = mut_rate;
         this.mutation_volume = mut_vol;
         
-        // init population data and call the rest to its subclass
+        // init population data and call the rest in its subclass
         this.fitness = new double[pop];
         this.population = new Chromosome[pop];
         this.init();
         
+        // generate a population if it hasn't been made yet 
         if (this.population == null)
         {
+          // a random bit string
           String[] pop_s = randomPopulation( this.population_size, 27 );
         
+          // generate the population
           for (int i = 0; i < this.population_size; i++)
           {
             this.population[i] = new Chromosome( pop_s[i] );
@@ -138,6 +148,7 @@ public abstract class Generation // abbreviated to: gen, plural: gens
         }
     }
     
+    // override to init the fitness function and population
     protected abstract void init();
         
     // 
@@ -223,6 +234,7 @@ public abstract class Generation // abbreviated to: gen, plural: gens
     
     protected boolean mutate( Chromosome chr )
     {
+        // generate a random number to determine mutation
         double rand = Math.random();
         if (rand <= this.mutation_rate)
         {
@@ -290,6 +302,7 @@ public abstract class Generation // abbreviated to: gen, plural: gens
         return y;
     }
     
+    // make sure mutation rate is in the range [0, 1]
     public static double cleanMutationRate( double r )
     {
         if (r > 1.0) r = 1.0;
@@ -297,6 +310,7 @@ public abstract class Generation // abbreviated to: gen, plural: gens
         return r;
     }
     
+    // returns an array of random bitstrings
     public static String[] randomPopulation( int n, int n_bits )
     {
         String[] y = new String[n];
@@ -313,9 +327,13 @@ public abstract class Generation // abbreviated to: gen, plural: gens
         // var decls
         String y = "g" + count + ": \n";
         int i, n = this.getPopulationSize();
+
+        // get all the fitnesses and populations
         double[] fitnesses = this.getFitness();
         Chromosome[] pop = this.getPopulation();
         
+        // print out all the chromosomes and
+        // corresponding fitnesses
         for (i = 0; i < n; i++)
         {
             y += "  " + (i+1) + ". Chromosome: ";

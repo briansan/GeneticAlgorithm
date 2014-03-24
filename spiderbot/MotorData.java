@@ -17,10 +17,17 @@ import geneticalgorithm.Encodable;
  */
 public class MotorData implements Encodable
 {
-    protected int motorSpeed;
-    protected boolean direction; // true == forward, false == reverse
+    //
+    // properties (instance variables)
+    //
+    protected int motorSpeed; // [0, 255]
+    protected boolean direction; 
+    // true == negative (reverse), false == positive (forward)
 
-    // default constructor sets speed = 0, direction = forward
+    //
+    // constructors
+    //
+    // default: sets speed = 10, direction = forward
     public MotorData()
     {
         this( 10, true );
@@ -36,10 +43,15 @@ public class MotorData implements Encodable
         direction = dir;
     }
     
+    //
     // accessor methods
+    //
     public int getMotorSpeed() {return motorSpeed;}
     public boolean getDirection() {return direction;}
     
+    //
+    // encodable interface
+    //
     @Override
     public BitString encode() 
     {
@@ -73,6 +85,11 @@ public class MotorData implements Encodable
         return 9;
     }
     
+    //
+    // convenience methods
+    //
+
+    // converts bit strings into motor data
     public static MotorData bin2motorData( String b )
     {
         // this function can only convert 9 bit strings

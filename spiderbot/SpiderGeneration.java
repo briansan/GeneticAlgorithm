@@ -28,17 +28,19 @@ public class SpiderGeneration extends Generation
     //
     // init the SpiderGeneration
     //
-  @Override
-  protected void init()
-  {
-      int i;
-      
-      this.ff = new SpiderBotFitnessFunction();
-      String[] pop_s = randomPopulation( this.population_size, 27 );
+    @Override
+    protected void init()
+    {
+        int i;
         
+        // set the fitness function
+        this.ff = new SpiderBotFitnessFunction();
+
+        // generate a random spider population
+        String[] pop_s = randomPopulation( this.population_size, 27 );
         for (i = 0; i < this.population_size; i++)
         {
             this.population[i] = new SpiderChromosome( pop_s[i] );
         }
-  }
- }
+    }
+}

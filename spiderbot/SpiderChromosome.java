@@ -15,6 +15,9 @@ import geneticalgorithm.Encodable;
  */
 public class SpiderChromosome extends Chromosome
 {
+    //
+    // constructors
+    //
     public SpiderChromosome( String s )
     {
         super( s );
@@ -31,6 +34,11 @@ public class SpiderChromosome extends Chromosome
         super( cleanMotors(motors) );
     }
     
+    //
+    // utility methods
+    //
+
+    // bitstring -> motors
     @Override
     public Encodable[] decode()
     {
@@ -46,7 +54,7 @@ public class SpiderChromosome extends Chromosome
         return new MotorData[]{m1,m2,m3};
     }
     
-    // motor array santiziation
+    // make sure that <motors> has exactly 3 elements
     private static MotorData[] cleanMotors( MotorData[] motors )
     {
         MotorData[] ret = new MotorData[3];
@@ -74,6 +82,10 @@ public class SpiderChromosome extends Chromosome
         return ret;
     }
     
+    //
+    // utility methods
+    //
+
     @Override
     public Object clone()
     {

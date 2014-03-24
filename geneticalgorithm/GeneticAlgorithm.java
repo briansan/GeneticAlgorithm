@@ -10,7 +10,7 @@ package geneticalgorithm;
 public abstract class GeneticAlgorithm
 {
     //
-    // utility variables
+    // properties (instance variables)
     //
     
     // a generation object that will control our chromosomes
@@ -62,6 +62,9 @@ public abstract class GeneticAlgorithm
     // override this method to initialize ff and population
     protected abstract void init( int popsize );
     
+    // evolve the generation
+    // returns whether or not the most fit chromosome
+    //   beats the fitness function
     public boolean evolve()
     {
         this.generation.evolve();
