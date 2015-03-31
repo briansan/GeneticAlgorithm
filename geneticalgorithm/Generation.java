@@ -34,6 +34,13 @@ public abstract class Generation // abbreviation: gen, plural: gens
     	Random
     }
     
+    // crossover point options
+    public enum CrossoverPoint {
+    	A_BC,
+    	AB_C,
+    	Random
+    }
+    
     // fitness value array for the gen
     protected double[] fitness; // of the current gen
     protected double[][] fitnessHistory; // ZZ: remember previous fitnesses
