@@ -20,13 +20,19 @@ public abstract class Generation // abbreviation: gen, plural: gens
     // a counter for each evolution
     protected int count = 0;
     
-    // ZZ: state machine?
-    /* States
-    private int state = 0;
-    private final int GenerationStateInit = 0;
-    private final int GenerationStateEvolving = 1;
-    private final int GenerationStateBestChromosomeFound = 2;
-    */
+    // States
+    public enum GenerationState {
+      Init,
+      Evolving,
+      BestChromosomeFound
+    }
+    
+    // crossover strategy options
+    public enum CrossoverStrategy {
+    	Parent1Hi_Parent2Lo,
+    	Parent2Hi_Parent1Lo,
+    	Random
+    }
     
     // fitness value array for the gen
     protected double[] fitness; // of the current gen
@@ -47,6 +53,17 @@ public abstract class Generation // abbreviation: gen, plural: gens
     
     // number of bits that will mutate
     protected int mutation_volume;
+
+    // crossover strategy
+    // 0: p1_hi + p2_lo
+    // 1: p2_hi + p1_lo
+    // 2: random
+    protected CrossoverStrategy x_strategy;
+
+    // crossover point selection
+    // true: random
+    // false: gene boundaries
+    protected boolean x_random;
     
     // reference to the most fit chromosome
     protected Chromosome most_fit;
@@ -120,9 +137,14 @@ public abstract class Generation // abbreviation: gen, plural: gens
     }
     public Generation( int pop, double mut_rate, int mut_vol )
     {
-        this( pop, mut_rate, mut_vol, 0 );
+        this( pop, mut_rate, mut_vol, CrossoverStrategy.Parent1Hi_Parent2Lo );
     }
-    public Generation( int pop, double mut_rate, int mut_vol, int options )
+    public Generation( int pop, double mut_rate, int mut_vol, CrossoverStrategy x_strategy )
+    {
+    	this( pop, mut_rate, mut_vol, x_strategy, true ); 
+    }
+    public Generation( int pop, double mut_rate, int mut_vol, 
+    		CrossoverStrategy x_strategy, boolean x_random )
     {
         // assignment of properties
         this.population_size = pop;
