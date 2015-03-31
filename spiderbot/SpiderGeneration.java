@@ -22,8 +22,11 @@ public class SpiderGeneration extends Generation
      {super(pop_size, mut_rate);}
     public SpiderGeneration( int pop_size, double mut_rate, int mut_vol)
     {super(pop_size,mut_rate,mut_vol);}
-    public SpiderGeneration( int pop_size, double mut_rate, int mut_vol, int options)
+    public SpiderGeneration( int pop_size, double mut_rate, int mut_vol, Generation.CrossoverStrategy options)
     {super(pop_size,mut_rate,mut_vol,options);}
+    public SpiderGeneration( int pop_size, double mut_rate, int mut_vol,
+    						 Generation.CrossoverStrategy x_strategy, boolean x_random )
+    {super(pop_size,mut_rate,mut_vol,x_strategy,x_random);}
     
     //
     // init the SpiderGeneration
