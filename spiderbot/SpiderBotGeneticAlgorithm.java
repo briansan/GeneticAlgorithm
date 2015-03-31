@@ -6,7 +6,7 @@
 //
 package spiderbot;
 import lejos.nxt.Button;
-import lejos.nxt.MotorPort;
+import lejos.nxt.Motor;
 import lejos.nxt.NXTRegulatedMotor;
 import lejos.util.Delay;
 import geneticalgorithm.Chromosome;
@@ -31,6 +31,7 @@ public class SpiderBotGeneticAlgorithm extends GeneticAlgorithm
 	// constructors
 	//
 
+    public SpiderBotGeneticAlgorithm() { super(); }
     public SpiderBotGeneticAlgorithm( int popsize )
     {super(popsize);}
     
@@ -46,9 +47,9 @@ public class SpiderBotGeneticAlgorithm extends GeneticAlgorithm
     @Override
     protected void init( int popsize )
     {
-    	left_m = new NXTRegulatedMotor(MotorPort.A);
-    	back_m = new NXTRegulatedMotor(MotorPort.B);
-    	right_m = new NXTRegulatedMotor(MotorPort.C);
+    	left_m = Motor.A;
+    	back_m = Motor.B;
+    	right_m = Motor.C;
         this.generation = new SpiderGeneration( popsize );
     }
 
@@ -145,5 +146,8 @@ public class SpiderBotGeneticAlgorithm extends GeneticAlgorithm
 		back_m.stop();
 		right_m.stop();
 	}
-    
+    public static void main( String[] args ) {
+        SpiderBotGeneticAlgorithm genalg = new SpiderBotGeneticAlgorithm();
+        genalg.start();
+    }
 }
