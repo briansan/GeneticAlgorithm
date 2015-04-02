@@ -33,6 +33,10 @@ public class Chromosome extends BitString
     //
     // constructor methods
     //
+    public Chromosome( int n )
+    {
+    	this( BitString.randomBitString(n) );
+    }
 
     // copy constructor
     public Chromosome( Chromosome ch )
@@ -144,7 +148,7 @@ public class Chromosome extends BitString
     }
     
     // reproduce with another chromosome <partner>
-    public Chromosome crossover( Chromosome partner )
+    public Chromosome crossover( Chromosome partner, int pivot )
     {
         // make sure classes match between mates
         if (!this.getClass().equals(partner.getClass()))
@@ -156,9 +160,6 @@ public class Chromosome extends BitString
         
         // create a copy of this chromosome
         Chromosome child = (Chromosome)this.clone();
-
-        // get a random index 
-        int pivot = randomIndex();
         
         // copy over bits [0, pivot) from this to child
         // ZZ: this doesn't seem necessary
