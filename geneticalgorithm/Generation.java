@@ -8,8 +8,28 @@
 
 package geneticalgorithm;
 
+import java.util.Random;
+
 public abstract class Generation // abbreviation: gen, plural: gens
 {
+	// 
+	// enums
+	//
+
+    // crossover strategy options
+    public static enum CrossoverStrategy {
+    	Parent1Hi_Parent2Lo,
+    	Parent2Hi_Parent1Lo,
+    	Random
+    }
+    
+    // crossover point options
+    public static enum CrossoverPoint {
+    	A_BC,
+    	AB_C,
+    	Random
+    }
+    
     // 
     // properties (instance variables)
     //
@@ -27,20 +47,6 @@ public abstract class Generation // abbreviation: gen, plural: gens
       BestChromosomeFound
     }
     
-    // crossover strategy options
-    public enum CrossoverStrategy {
-    	Parent1Hi_Parent2Lo,
-    	Parent2Hi_Parent1Lo,
-    	Random
-    }
-    
-    // crossover point options
-    public enum CrossoverPoint {
-    	A_BC,
-    	AB_C,
-    	Random
-    }
-    
     // fitness value array for the gen
     protected double[] fitness; // of the current gen
     protected double[][] fitnessHistory; // ZZ: remember previous fitnesses
@@ -52,25 +58,26 @@ public abstract class Generation // abbreviation: gen, plural: gens
     // the fitness fn that will rate the chromosomes to evaluate their fitnesses
     // must be set in a subclass constructor
     protected FitnessFunction ff;
+    private boolean did_rate = false;
     
+    // population size (default: 8)
     protected int population_size;
     
     // probability that a chromosome will mutate: [0, 1]
+    // (default: 0.02)
     protected double mutation_rate; 
     
     // number of bits that will mutate
+    // (default: 1)
     protected int mutation_volume;
 
     // crossover strategy
-    // 0: p1_hi + p2_lo
-    // 1: p2_hi + p1_lo
-    // 2: random
+    // (default: Parent1Hi_Parent2Lo)
     protected CrossoverStrategy x_strategy;
 
     // crossover point selection
-    // true: random
-    // false: gene boundaries
-    protected boolean x_random;
+    // (default: Random)
+    protected CrossoverPoint x_pt;
     
     // reference to the most fit chromosome
     protected Chromosome most_fit;
@@ -124,6 +131,17 @@ public abstract class Generation // abbreviation: gen, plural: gens
     /*
      get any chromosome */
     public Chromosome getChromosomeAtIndex(int i) {return this.population[i];}
+
+    
+    //
+    // abstract methods
+    //
+    
+    // override to establish initial population
+    protected abstract Chromosome[] initial_population( int n );
+    
+    // override to establish fitness function
+    protected abstract FitnessFunction fitness_function();
     
     //
     // constructor methods
@@ -131,7 +149,7 @@ public abstract class Generation // abbreviation: gen, plural: gens
     
     public Generation()
     {
-        this( 10 );
+        this( 8 );
     }
     
     public Generation( int pop )
@@ -148,10 +166,10 @@ public abstract class Generation // abbreviation: gen, plural: gens
     }
     public Generation( int pop, double mut_rate, int mut_vol, CrossoverStrategy x_strategy )
     {
-    	this( pop, mut_rate, mut_vol, x_strategy, true ); 
+    	this( pop, mut_rate, mut_vol, x_strategy, CrossoverPoint.Random ); 
     }
     public Generation( int pop, double mut_rate, int mut_vol, 
-    		CrossoverStrategy x_strategy, boolean x_random )
+    		CrossoverStrategy x_strategy, CrossoverPoint x_pt )
     {
         // assignment of properties
         this.population_size = pop;
@@ -160,29 +178,28 @@ public abstract class Generation // abbreviation: gen, plural: gens
         
         // init population data and call the rest in its subclass
         this.fitness = new double[pop];
-        this.population = new Chromosome[pop];
-        this.init();
+        this.population = this.initial_population(pop); // new Chromosome[pop];
+        this.ff = this.fitness_function();
         
-        // generate a population if it hasn't been made yet 
-        if (this.population == null)
-        {
-          // a random bit string
-          String[] pop_s = randomPopulation( this.population_size, 27 );
-        
-          // generate the population
-          for (int i = 0; i < this.population_size; i++)
-          {
-            this.population[i] = new Chromosome( pop_s[i] );
-          }
-        }
     }
-    
-    // override to init the fitness function and population
-    protected abstract void init();
-        
     // 
     // utility methods
     //
+    
+    // primary function to rate a population
+    public double[] rate()
+    {
+        // iterate through population and rate each chromosome
+        for (int i=0; i<this.population_size; i++)
+        {
+        	Chromosome chr = this.population[i];
+            this.fitness[i] = this.ff.rate( chr );
+        }
+        // toggle the bool
+        this.did_rate = true;
+        
+        return this.fitness;
+    }
     
     // primary function for evolving a population
     public int evolve()
@@ -190,17 +207,12 @@ public abstract class Generation // abbreviation: gen, plural: gens
         // var decls: ijk for indexing, chr for dummy chromosome pointer
         //            indicies for holding a sorted array of indicies in the generation
         int i=0,j=0,k=0;
-        Chromosome chr;
         int[] indicies;
         
         Chromosome[] new_population = new Chromosome[this.population_size];
         
-        // iterate through population and rate each chromosome
-        for (i=0; i<this.population_size; i++)
-        {
-            chr = population[i];
-            this.fitness[i] = ff.rate( chr );
-        }
+        // rate the chromosomes if they weren't rated
+        if (!this.did_rate) this.rate();
         
         // a pretty expensive sorting routine
         indicies = sort(this.fitness);
@@ -208,10 +220,10 @@ public abstract class Generation // abbreviation: gen, plural: gens
         // likewise, a pretty expensive loop that generates a whole new 
         // generation
         // for each index in the sorted array of indicies
-        for (i=0, j=0; i < population_size; j++)
+        for (i=0, j=0; i < this.population_size; j++)
         {
             // get the next best chromosome
-            double next_fit = this.fitness[indicies[j]]; // used for later 
+            // ZZ: never used...double next_fit = this.fitness[indicies[j]]; // used for later 
             Chromosome next = this.population[indicies[j]];
 
             // try to mutate next and allow into next generation
@@ -241,11 +253,22 @@ public abstract class Generation // abbreviation: gen, plural: gens
                     
                     if (i < population_size)
                     {
-                        double coin = Math.random();
-                        if (coin > 0.5)
-                            new_population[i++] = next.crossover(worse);
+                    	Random rng = new Random();
+                    	// determine crossover pivot point
+                    	int pivot = this.population[0].n_bits / 2;
+                    	if (this.x_pt == CrossoverPoint.Random)
+                    		pivot = rng.nextInt();
+                    	else if (this.x_pt == CrossoverPoint.A_BC)
+                    		pivot = this.population[0].components[0].n_bits();
+                    	else if (this.x_pt == CrossoverPoint.AB_C)
+                    		pivot = this.population[0].n_bits - this.population[0].components[0].n_bits();
+                    	// determine crossover strategy
+                        if (this.x_strategy == CrossoverStrategy.Parent1Hi_Parent2Lo)
+                            new_population[i++] = next.crossover(worse,pivot);
+                        else if (this.x_strategy == CrossoverStrategy.Parent2Hi_Parent1Lo)
+                            new_population[i++] = worse.crossover(next,pivot);
                         else
-                            new_population[i++] = worse.crossover(next);
+                        	new_population[i++] = rng.nextDouble() > 0.5 ? next.crossover(worse,pivot) : worse.crossover(next,pivot);
                     }
                 }
             }
@@ -257,6 +280,9 @@ public abstract class Generation // abbreviation: gen, plural: gens
         // Chromosome[] old = this.population.clone();
         this.population = new_population;
         this.count++;
+        
+        // the next generation has not been rated yet...
+        this.did_rate = false;
         
         return this.count;
     }
