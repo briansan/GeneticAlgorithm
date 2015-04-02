@@ -5,7 +5,6 @@
 //  of the spider bot
 //
 package spiderbot;
-import lejos.nxt.Button;
 import lejos.nxt.Motor;
 import lejos.nxt.NXTRegulatedMotor;
 import lejos.util.Delay;
@@ -26,31 +25,25 @@ public class SpiderBotGeneticAlgorithm extends GeneticAlgorithm
     // reference to each motor
 	NXTRegulatedMotor left_m, back_m, right_m;
 	boolean bestFound = false;
+	int wait;
 	
 	// 
 	// constructors
 	//
-
-    public SpiderBotGeneticAlgorithm() { super(); }
-    public SpiderBotGeneticAlgorithm( int popsize )
-    {super(popsize);}
     
-    public SpiderBotGeneticAlgorithm( int popsize, double target )
-    {super(popsize,target);}
-    
-    public SpiderBotGeneticAlgorithm( int popsize, double target, int opt)
-    {super(popsize,target,opt);}
-    
-    //
-    // genetic algorithm methods
-    //
-    @Override
-    protected void init( int popsize )
+	public SpiderBotGeneticAlgorithm( SpiderGeneration gen )
+	{
+		this(gen,3000);
+	}
+	
+    public SpiderBotGeneticAlgorithm( SpiderGeneration gen, int wait_time )
     {
+    	super(gen,0.95);
+    	
     	left_m = Motor.A;
-    	back_m = Motor.B;
-    	right_m = Motor.C;
-        this.generation = new SpiderGeneration( popsize );
+    	right_m = Motor.B;
+    	back_m = Motor.C;
+    	this.wait = wait_time;
     }
 
     //
@@ -111,7 +104,7 @@ public class SpiderBotGeneticAlgorithm extends GeneticAlgorithm
 			      if (Button.LEFT.isDown()) if (i>2) i-=2;
 			      if (Button.RIGHT.isDown()) continue;
 				*/
-				Delay.msDelay(3000);
+				Delay.msDelay(this.wait);
 			}
 
 			// evolve the population to the next generation
@@ -138,16 +131,12 @@ public class SpiderBotGeneticAlgorithm extends GeneticAlgorithm
 		if (motors[1].getDirection()) back_m.backward(); else back_m.forward();
 		if (motors[2].getDirection()) right_m.backward(); else right_m.forward();
 		
-		// wait for button press
-		Button.waitForAnyPress();
+		// wait one minute
+		Delay.msDelay(60000);
 		
 		// stop the motors
 		left_m.stop();
 		back_m.stop();
 		right_m.stop();
 	}
-    public static void main( String[] args ) {
-        SpiderBotGeneticAlgorithm genalg = new SpiderBotGeneticAlgorithm();
-        genalg.start();
-    }
 }
