@@ -228,11 +228,10 @@ public class BitString
         return new BitString( dec2bin(x) );  
     }
     
+
     // converts an integer value to a binary character string
-    public static String dec2bin( int x )
+    public static String dec2bin( int x, int count )
     {
-        // build the bit-string
-        int count = countBin( x );
         int n = x;
         char[] s = new char[count];
 
@@ -253,6 +252,11 @@ public class BitString
           }
         }
         return new String(s);
+    }
+    public static String dec2bin( int x )
+    {
+        // build the bit-string
+        return dec2bin(x,countBin(x));
     }
     
     // returns a random bit string object that is n bits long
