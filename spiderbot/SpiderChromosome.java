@@ -18,6 +18,11 @@ public class SpiderChromosome extends Chromosome
     //
     // constructors
     //
+    public SpiderChromosome( int n )
+    {
+    	super( n );
+    }
+
     public SpiderChromosome( String s )
     {
         super( s );
@@ -97,7 +102,7 @@ public class SpiderChromosome extends Chromosome
         String y = "";
         for (int i = 0; i < 3; i++)
         {
-            y += "motor" + (i+1) + ": ";
+            y += "Motor" + (char)('A'+i) + ": ";
             MotorData m = (MotorData)components[i];
             y += m + "\n";
         }
