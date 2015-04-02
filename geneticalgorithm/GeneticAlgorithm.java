@@ -34,33 +34,38 @@ public abstract class GeneticAlgorithm
     
     public GeneticAlgorithm()
     {
-        this( 10 );
+    	this( 8 );
     }
     
-    public GeneticAlgorithm( int popsize )
+    public GeneticAlgorithm( int pop_size )
     {
-        this( popsize, 0.05 );
+        this( new Generation(pop_size) {
+        	@Override
+        	protected FitnessFunction fitness_function() {
+        		return null;
+        	}
+        	@Override
+        	protected Chromosome[] initial_population( int n ) {
+        		return null;
+        	}
+        });
     }
     
-    public GeneticAlgorithm( int popsize, double target_fit )
+    public GeneticAlgorithm( Generation gen )
     {
-        this( popsize, target_fit, 1 );
+        this( gen, 0.95 );
     }
     
-    public GeneticAlgorithm( int popsize, double target_fit, int opt )
+    
+    public GeneticAlgorithm( Generation gen , double target_fit )
     {
+    	this.generation = gen;
         this.target_fitness = target_fit;
-        this.options = opt;
-        // generation and fitness function should be instantiated by init()
-        this.init( popsize );
     }
     
     // 
     // important API
     //
-    
-    // override this method to initialize ff and population
-    protected abstract void init( int popsize );
     
     // evolve the generation
     // returns whether or not the most fit chromosome
