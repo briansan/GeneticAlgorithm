@@ -21,9 +21,9 @@ public class Main {
         
         // crossover options
         final CrossoverStrategy CROSSOVER_STRATEGY = CrossoverStrategy.Parent1Hi_Parent2Lo; // choices: Parent1Hi_Parent2Lo, Parent2Hi_Parent1Lo, Random
-        final CrossoverPoint    CROSSOVER_POINT    = CrossoverPoint.AB_C; // choices: A_BC, AB_C, Random
+        final CrossoverPoint    CROSSOVER_POINT    = CrossoverPoint.Random; // choices: A_BC, AB_C, Random
         
-        final int				PAUSE_TIME		   = 2000; // wait time between chromosome displays (milliseconds)
+        final int				PAUSE_TIME		   = 5000; // wait time between chromosome displays (milliseconds)
         
         // create the initial generation
         SpiderGeneration generation = new SpiderGeneration( POPULATION_SIZE, MUTATION_RATE, MUTATION_VOLUME, CROSSOVER_STRATEGY, CROSSOVER_POINT );
