@@ -49,9 +49,9 @@ public class SpiderBotFitnessFunction implements FitnessFunction
         
         // errors are a function of difference between motor speeds
         //  multiplied by its weight
-        spd_err_lr = ((double)Math.abs(m1.motorSpeed - m2.motorSpeed) / 255) 					   * 0.25;
-        spd_err_lb = (m3.motorSpeed > m1.motorSpeed ? 1.0 : (double)Math.abs(m1.motorSpeed - m3.motorSpeed/2)/128) * 0.125;
-        spd_err_rb = (m3.motorSpeed > m2.motorSpeed ? 1.0 : (double)Math.abs(m2.motorSpeed - m3.motorSpeed/2)/128) * 0.125;
+        spd_err_lr = ( (double)Math.abs(m1.motorSpeed - m2.motorSpeed) / 255 ) 					   * (0.25);
+        spd_err_lb = (m3.motorSpeed > m1.motorSpeed ? 1.0 : (double)Math.abs(m1.motorSpeed/2 - m3.motorSpeed)/128) * (0.125);
+        spd_err_rb = (m3.motorSpeed > m2.motorSpeed ? 1.0 : (double)Math.abs(m2.motorSpeed/2 - m3.motorSpeed)/128) * (0.125);
         
         // compute the errors
         dir_err = dir_err_l + dir_err_r + dir_err_back;
