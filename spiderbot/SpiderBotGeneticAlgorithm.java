@@ -113,9 +113,9 @@ public class SpiderBotGeneticAlgorithm extends GeneticAlgorithm
 		
 		// get the best chromosome and display its information
 		Chromosome chr = this.generation.getMostFit();
-		String msg = "";
-		msg +=  "target found:\n" ;
-		msg += "bits: " + chr + "\n";
+		String msg = ""; 
+		msg += "target found:\n" ;
+		msg += "Generation " + g.getCount() + "\n";
 		msg += chr.toEnglishString();
 		msg += String.format( "fit: %.4f", ff.rate(chr));
 		System.out.println(msg);
@@ -132,7 +132,7 @@ public class SpiderBotGeneticAlgorithm extends GeneticAlgorithm
 		if (motors[2].getDirection()) back_m.backward(); else back_m.forward();
 		
 		// wait one minute
-		Delay.msDelay(60000);
+		Delay.msDelay(20000);
 		
 		// stop the motors
 		left_m.stop();
