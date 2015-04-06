@@ -95,11 +95,11 @@ public class MotorData implements Encodable
         // this function can only convert 9 bit strings
         if (b.length() != 9) return null; 
         
-        // get the first 8 bits and convert to decimal
+        // get the last 8 bits and convert to decimal
         String motorspeed_s = b.substring(1, 9);
         int motorspeed = BitString.bin2dec(motorspeed_s);
         
-        // get the last bit: 1 == reverse, 0 == forward
+        // get the first bit: 1 == reverse, 0 == forward
         boolean direction = b.charAt(0) == '1';
         return new MotorData( motorspeed, direction );
     }
