@@ -37,11 +37,10 @@ public class SpiderGeneration extends Generation
     	// generate a known pattern of initial chromosomes
     	
     	// an array of motor speeds
-    	int[] speeds = new int[]{ 17, 37, 67, 107, 157, 167, 197, 227 };
+    	int[] speeds = new int[]{ 0x1ff, 0x92, 0x155, 0x99, 0x1f0, 0x1f, 0x124, 0xdb };
     	
     	// k is the index into the speed array that will increment at a factorial rate
     	int k = 0, incr = 1;
-    	boolean dir = false; // for the direction, will toggle at each iteration
     	
     	// over all the population...
         for (int i = 0; i < n; i++)
@@ -50,10 +49,9 @@ public class SpiderGeneration extends Generation
         	for (int j = 0; j < 3; j++)
         	{
         		// generate a value
-        		int val = (dir ? 256 : 0) + speeds[k%8];
+        		int val = speeds[k%8];
         		chr_s += BitString.dec2bin(val,9);
         		// iterate
-        		dir = !dir;
         		k += incr;
         		incr += 3;
         	}
