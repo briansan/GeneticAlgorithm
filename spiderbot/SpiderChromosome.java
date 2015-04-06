@@ -100,10 +100,11 @@ public class SpiderChromosome extends Chromosome
     public String toEnglishString()
     {
         String y = "";
+        MotorData[] motors = (MotorData[])this.decode();
         for (int i = 0; i < 3; i++)
         {
             y += "Motor" + (char)('A'+i) + ": ";
-            MotorData m = (MotorData)components[i];
+            MotorData m = motors[i];
             y += m + "\n";
         }
         return y;
