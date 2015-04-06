@@ -14,11 +14,16 @@ public class Main {
     	
     	// create constants
         final int               POPULATION_SIZE    = 8;    // size of the population
+        
+        // mutation options
         final double            MUTATION_RATE      = 0.02; // probability of mutation
         final int               MUTATION_VOLUME    = 1;    // number of bits to mutate
+        
+        // crossover options
         final CrossoverStrategy CROSSOVER_STRATEGY = CrossoverStrategy.Parent1Hi_Parent2Lo; // choices: Parent1Hi_Parent2Lo, Parent2Hi_Parent1Lo, Random
-        final CrossoverPoint    CROSSOVER_POINT    = CrossoverPoint.Random; // choices: A_BC, AB_C, Random
-        final int				PAUSE_TIME		   = 1000; // wait time between chromosome displays (milliseconds)
+        final CrossoverPoint    CROSSOVER_POINT    = CrossoverPoint.AB_C; // choices: A_BC, AB_C, Random
+        
+        final int				PAUSE_TIME		   = 2000; // wait time between chromosome displays (milliseconds)
         
         // create the initial generation
         SpiderGeneration generation = new SpiderGeneration( POPULATION_SIZE, MUTATION_RATE, MUTATION_VOLUME, CROSSOVER_STRATEGY, CROSSOVER_POINT );
