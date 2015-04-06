@@ -26,9 +26,8 @@ public class SpiderBotFitnessFunction implements FitnessFunction
         MotorData m1, m2, m3; // dummy variables...m1 = left, m2 = back, m3 = right
         double y;             // return value
         double err;           // total error
-        double dir_err, dir_err_lr, dir_err_back;           // directional error (0.5)
+        double dir_err, dir_err_l, dir_err_r, dir_err_back;           // directional error (0.5)
         double spd_err, spd_err_lr, spd_err_lb, spd_err_rb; // speed error (0.5)
-        boolean back_overflow; 
         // the speed of the back motor accounts for 50% of the speed error (0.25)
         
         // 
@@ -40,21 +39,22 @@ public class SpiderBotFitnessFunction implements FitnessFunction
         
         // left/right directional sync is most important (half weight)
         // left/back and right/back directional is half as important
-        dir_err_lr = (m1.direction == m3.direction && m1.direction == true) ? 0 : 0.25;
-        dir_err_back = m2.direction == false ? 0 : 0.25;
+        double dir_weight = 0.5/3;
+        dir_err_l = m1.direction ? 0 : dir_weight;
+        dir_err_r = m2.direction ? 0 : dir_weight;
+        dir_err_back = m3.direction == false ? 0 : dir_weight;
         
         // if back is too fast, then errors for left/back
         //  and right/back are automatically maxed out
-        back_overflow = m2.motorSpeed < m1.motorSpeed;
         
         // errors are a function of difference between motor speeds
         //  multiplied by its weight
-        spd_err_lr = ((double)Math.abs(m1.motorSpeed - m3.motorSpeed) / 256) * 0.25;
-        spd_err_lb = (back_overflow ? 1.0 : (double)Math.abs(m1.motorSpeed - m2.motorSpeed/2)/128) * 0.125;
-        spd_err_rb = (back_overflow ? 1.0 : (double)Math.abs(m3.motorSpeed - m2.motorSpeed/2)/128) * 0.125;
+        spd_err_lr = ((double)Math.abs(m1.motorSpeed - m2.motorSpeed) / 255) 					   * 0.25;
+        spd_err_lb = (m3.motorSpeed > m1.motorSpeed ? 1.0 : (double)Math.abs(m1.motorSpeed - m3.motorSpeed/2)/128) * 0.125;
+        spd_err_rb = (m3.motorSpeed > m2.motorSpeed ? 1.0 : (double)Math.abs(m2.motorSpeed - m3.motorSpeed/2)/128) * 0.125;
         
         // compute the errors
-        dir_err = dir_err_lr + dir_err_back;
+        dir_err = dir_err_l + dir_err_r + dir_err_back;
         spd_err = spd_err_lr + spd_err_lb + spd_err_rb;
         err = dir_err + spd_err;
         
