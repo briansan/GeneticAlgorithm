@@ -38,7 +38,7 @@ public class SpiderBotGeneticAlgorithm extends GeneticAlgorithm
 	
     public SpiderBotGeneticAlgorithm( SpiderGeneration gen, int wait_time )
     {
-    	super(gen,0.95);
+    	super(gen,0.90);
     	
     	left_m = Motor.A;
     	right_m = Motor.B;
@@ -61,7 +61,6 @@ public class SpiderBotGeneticAlgorithm extends GeneticAlgorithm
 		{	
 			// determine the generation number
 			int gen_count = g.getCount();
-			System.out.println( "Generation " + gen_count);
 
 			// looping through the population
 			for (int i = 0; i < n; i++)
@@ -74,10 +73,11 @@ public class SpiderBotGeneticAlgorithm extends GeneticAlgorithm
 				// scale the motor speeds to the proper NXT context
 				double scale = 360./256;
 				int spd_l = (int)(m1.getMotorSpeed() * scale);
-				int spd_b = (int)(m2.getMotorSpeed() * scale);
-				int spd_r = (int)(m3.getMotorSpeed() * scale);
+				int spd_r = (int)(m2.getMotorSpeed() * scale);
+				int spd_b = (int)(m3.getMotorSpeed() * scale);
 				
 				// print out chromosome information to screen
+				System.out.println( "Generation " + gen_count);
 				System.out.println( "Chomosome " + (gen_count*n+i+1) );
 				System.out.print( chr.toEnglishString() );
 				String fitness = String.valueOf(ff.rate(chr));
@@ -90,8 +90,8 @@ public class SpiderBotGeneticAlgorithm extends GeneticAlgorithm
 				right_m.setSpeed(spd_r);
 
 				if (m1.getDirection()) left_m.backward(); else left_m.forward();
-				if (m2.getDirection()) back_m.backward(); else back_m.forward();
-				if (m3.getDirection()) right_m.backward(); else right_m.forward();
+				if (m2.getDirection()) right_m.backward(); else right_m.forward();
+				if (m3.getDirection()) back_m.backward(); else back_m.forward();
 
 				//
 				// pick one: wait for user input or wait 3 sec to continue
@@ -117,19 +117,19 @@ public class SpiderBotGeneticAlgorithm extends GeneticAlgorithm
 		msg +=  "target found:\n" ;
 		msg += "bits: " + chr + "\n";
 		msg += chr.toEnglishString();
-		msg += "fit: " + ff.rate(chr);
+		msg += String.format( "fit: %.4f", ff.rate(chr));
 		System.out.println(msg);
 
 		// decode its motor speeds
 		MotorData[] motors = (MotorData[])chr.decode();
 		left_m.setSpeed(motors[0].getMotorSpeed());
-		back_m.setSpeed(motors[1].getMotorSpeed());
-		right_m.setSpeed(motors[2].getMotorSpeed());
+		right_m.setSpeed(motors[1].getMotorSpeed());
+		back_m.setSpeed(motors[2].getMotorSpeed());
 
 		// set the motors
 		if (motors[0].getDirection()) left_m.backward(); else left_m.forward();
-		if (motors[1].getDirection()) back_m.backward(); else back_m.forward();
-		if (motors[2].getDirection()) right_m.backward(); else right_m.forward();
+		if (motors[1].getDirection()) right_m.backward(); else right_m.forward();
+		if (motors[2].getDirection()) back_m.backward(); else back_m.forward();
 		
 		// wait one minute
 		Delay.msDelay(60000);
