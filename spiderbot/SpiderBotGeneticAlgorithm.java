@@ -117,7 +117,10 @@ public class SpiderBotGeneticAlgorithm extends GeneticAlgorithm
 		msg += "target found:\n" ;
 		msg += "Generation " + g.getCount() + "\n";
 		msg += chr.toEnglishString();
-		msg += String.format( "fit: %.4f", ff.rate(chr));
+		double rate = ff.rate(chr);
+		rate = Math.round(rate*10000)/10000.0;
+		msg += "fit: "+rate;
+		
 		System.out.println(msg);
 
 		// decode its motor speeds
